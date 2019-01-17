@@ -70,6 +70,7 @@ namespace WebChat
                 routes =>
                 {
                     routes.MapHub<ChatHub>("/chat");
+                    routes.MapHub<ChatHub>("/PrivateChat");
                 });
 
             app.UseMvc(routes =>

@@ -1,22 +1,22 @@
 ﻿@model System.Collections.Generic.List<Microsoft.AspNetCore.Identity.IdentityUser>
 @{
-    ViewBag.Title = "Chat With All Users";
+    ViewBag.Title = "Chat with choosen Users";
 }
 
 <h2 class="text-center">@ViewBag.Title</h2>
 <hr style="height: 3px;" class="bg-dark" />
 <div class="container-fluid">
     <div class="row justify-content-around">
-        <div class="col-md-3 ">
+        <div class="col-md-3">
             <h4 class="text-center pb-4 pt-4">All Users</h4>
 
             <div>
-
                 @foreach (var user in Model)
                 {
-                    <div class="pt-2 text-center">
-                        <h5>@user.UserName</h5>
-                    </div>
+                <div  class="pr-3 pl-3 p-1 row justify-content-between">
+                    <h5>@user.UserName</h5>
+                    <button id="chatNow" class="ml-4 btn btn-dark"><div>Chat</div></button>
+                </div>
                 }
             </div>
         </div>
