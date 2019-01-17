@@ -13,10 +13,10 @@
             <div>
                 @foreach (var user in Model)
                 {
-                <div  class="pr-3 pl-3 p-1 row justify-content-between">
-                    <h5>@user.UserName</h5>
-                    <button id="chatNow" class="ml-4 btn btn-dark"><div>Chat</div></button>
-                </div>
+                    <div id="chatUser" class="pr-3 pl-3 p-1 row justify-content-between">
+                        <h5 id="user">@user.UserName</h5>
+                        <button id="chatNow" value="@user.Id" class="ml-4 btn btn-dark "><div>Chat</div></button>
+                    </div>
                 }
             </div>
         </div>
@@ -40,19 +40,31 @@
     <script>
         var connection =
             new signalR.HubConnectionBuilder()
-                .withUrl("/chat")
+                .withUrl("/privateChat")
                 .build();
+
         connection.on("NewMessage",
             function (message) {
                 var chatInfo = `<div>[${message.user}] ${message.text}</div>`;
                 $("#messagesList").append(chatInfo);
             });
+
         $("#sendButton").click(function () {
             var message = $("#messageInput").val();
-            connection.invoke("Send", message);
+            var userId = $('button.active').val();
+            connection.invoke("SendPrivateMessage", message, userId);
         });
+
+
         connection.start().catch(function (err) {
             return console.error(err.toString());
+        });
+        $('button').not('#sendButton').click(function () {
+
+            if ('button'.Id != "#sendButton") {
+                $(this).toggleClass('active');
+                $('button').not(this).removeClass('active');
+            }
         });
     </script>
 }

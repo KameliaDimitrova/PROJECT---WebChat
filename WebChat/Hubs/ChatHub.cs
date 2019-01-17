@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Serialization;
+using WebChat.Data;
 using WebChat.Models;
 using WebChat.Models.Chat;
 
@@ -14,6 +15,12 @@ namespace WebChat.Hubs
     [Authorize]
     public class ChatHub : Hub
     {
+        private ApplicationDbContext dbContext;
+
+        public ChatHub(ApplicationDbContext db)
+        {
+            this.dbContext = db;
+        }
         static HashSet<string> CurrentConnections = new HashSet<string>();
 
         public async Task OnConnected()
@@ -57,11 +64,13 @@ namespace WebChat.Hubs
 
         public async Task SendPrivateMessage(string message, string connId)
         {
-            await this.Clients.Client(connId).SendAsync("NewMessage", new Message
+            var senderId = this.dbContext.Users.FirstOrDefault(x => x.UserName == this.Context.User.Identity.Name).Id;
+            await this.Clients.Users(connId, senderId).SendAsync("NewMessage", new Message
             {
                 User = this.Context.User.Identity.Name,
                 Text = message,
             });
+
         }
     }
 }

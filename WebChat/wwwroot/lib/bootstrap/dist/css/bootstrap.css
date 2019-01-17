@@ -35,6 +35,11 @@
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.btn-primary:active:hover {
+    background-color: red;
+    border-color: red;
+}
+
 *,
 *::before,
 *::after {
@@ -2506,6 +2511,12 @@ fieldset:disabled a.btn {
   color: #fff;
   background-color: #dc3545;
   border-color: #dc3545;
+}
+
+#chatNow.active {
+    background-color: greenyellow;
+    color: black;
+    font-weight: 
 }
 
 .btn-danger:hover {
