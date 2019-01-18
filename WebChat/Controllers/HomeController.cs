@@ -34,7 +34,26 @@ namespace WebChat.Controllers
         [Authorize]
         public IActionResult PrivateChat()
         {
-          return View(dbContext.Users.ToList());
+            var chatViewModel = new ChatViewModel();
+            chatViewModel.Users = this.dbContext.Users.Where(x=>x.UserName!=this.User.Identity.Name).ToList();
+            chatViewModel.Messages= this.dbContext.Messages.Where(x => x.IsPrivate == true).ToList();
+            chatViewModel.SenderUsername = this.dbContext.Users
+                .FirstOrDefault(x => x.UserName == User.FindFirst(ClaimTypes.Name).Value).UserName;
+
+            return View(chatViewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        public ActionResult PrivateChat(string recieverName)
+        {
+            var chatViewModel = new ChatViewModel();
+            chatViewModel.SenderUsername = this.dbContext.Users
+                .FirstOrDefault(x => x.UserName == User.FindFirst(ClaimTypes.Name).Value).UserName;
+            chatViewModel.Users = this.dbContext.Users.Where(x => x.UserName != this.User.Identity.Name).ToList();
+            chatViewModel.Messages = this.dbContext.Messages.Where(x => x.IsPrivate == true&&x.ConnectionId==chatViewModel.SenderUsername+ recieverName).ToList();
+           
+
+            return View(chatViewModel);
         }
 
         [Authorize]

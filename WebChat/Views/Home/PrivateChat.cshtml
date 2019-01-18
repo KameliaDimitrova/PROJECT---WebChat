@@ -1,6 +1,6 @@
-﻿@model System.Collections.Generic.List<Microsoft.AspNetCore.Identity.IdentityUser>
+﻿
 @{
-    ViewBag.Title = "Chat with choosen Users";
+    ViewBag.Title = "Choose user to chat with";
 }
 
 <h2 class="text-center">@ViewBag.Title</h2>
@@ -11,7 +11,7 @@
             <h4 class="text-center pb-4 pt-4">All Users</h4>
 
             <div>
-                @foreach (var user in Model)
+                @foreach (var user in Model.Users)
                 {
                     <div id="chatUser" class="pr-3 pl-3 p-1 row justify-content-between">
                         <h5 id="user">@user.UserName</h5>
@@ -56,6 +56,7 @@
             var userId = $('button.active').val();
           
             connection.invoke("SendPrivateMessage", message, userId);
+            
         });
 
              

@@ -69,17 +69,21 @@ namespace WebChat.Hubs
 
         public async Task SendPrivateMessage(string message, string reciverId)
         {
+
             var senderId = this.dbContext.Users.FirstOrDefault(x => x.UserName == this.Context.User.Identity.Name).Id;
-            await this.Clients.Users(reciverId, senderId).SendAsync("NewMessage", new Message
+            var sendMessage = new Message
             {
-                ConnectionId = this.Context.ConnectionId,
+                ConnectionId = senderId+reciverId,
                 FromUserName = this.Context.User.Identity.Name,
-                ToUserName = this.dbContext.Users.FirstOrDefault(x=>x.Id== reciverId).UserName,
+                ToUserName = this.dbContext.Users.FirstOrDefault(x => x.Id == reciverId).UserName,
                 FromUserID = senderId,
+                IsPrivate = true,
                 ToUserID = reciverId,
                 Text = message,
-            });
-
+            };
+            this.dbContext.Messages.Add(sendMessage);
+            this.dbContext.SaveChanges();
+            await this.Clients.Users(reciverId, senderId).SendAsync("NewMessage", sendMessage);
         }
     }
 }
