@@ -29,6 +29,7 @@ namespace WebChat.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult PrivateChat()
         {
             return View(dbContext.Users.ToList());

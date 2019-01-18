@@ -21,6 +21,7 @@
             </div>
         </div>
         <div class="col-md-9 input-holder">
+
             <div class="input-holder">
                 <h4 class="text-left pb-4 pt-4">Message</h4>
                 <div id="message-holder" class="d-flex justify-content-start">
@@ -42,29 +43,34 @@
             new signalR.HubConnectionBuilder()
                 .withUrl("/privateChat")
                 .build();
+     
 
         connection.on("NewMessage",
             function (message) {
-                var chatInfo = `<div>[${message.user}] ${message.text}</div>`;
+                var chatInfo = `<div>[${message.fromUserName}] ${message.text}</div>`;
                 $("#messagesList").append(chatInfo);
             });
 
         $("#sendButton").click(function () {
             var message = $("#messageInput").val();
             var userId = $('button.active').val();
+          
             connection.invoke("SendPrivateMessage", message, userId);
         });
 
+             
+        $('button').not('#sendButton').click(function () {
+            var userId = $('button.active').val();
+            if ('button'.Id != "#sendButton") {
+                $(this).toggleClass('active');
+                $('button').not(this).removeClass('active');   
+                $('#messagesList').load("https://localhost:44354/Home/PrivateChat" + " #messagesList");
+                connection.invoke("Connect",userId)
+            }
+        });
 
         connection.start().catch(function (err) {
             return console.error(err.toString());
-        });
-        $('button').not('#sendButton').click(function () {
-
-            if ('button'.Id != "#sendButton") {
-                $(this).toggleClass('active');
-                $('button').not(this).removeClass('active');
-            }
         });
     </script>
 }

@@ -11,7 +11,7 @@ using WebChat.Models.Chat;
 
 namespace WebChat.Hubs
 {
-    
+
     [Authorize]
     public class ChatHub : Hub
     {
@@ -32,7 +32,7 @@ namespace WebChat.Hubs
         }
 
 
-       
+
         public List<string> GetAllActiveConnections()
         {
             return CurrentConnections.ToList();
@@ -41,8 +41,9 @@ namespace WebChat.Hubs
 
         static List<User> SignalRUsers = new List<User>();
 
-        public void Connect(string userName)
+        public void Connect(string userId)
         {
+            var userName = this.dbContext.Users.FirstOrDefault(x => x.Id == userId).UserName;
             var id = Context.ConnectionId;
 
             if (SignalRUsers.Count(x => x.ConnectionId == id) == 0)
@@ -51,23 +52,30 @@ namespace WebChat.Hubs
             }
         }
 
-       
+
 
         public async Task Send(string message)
         {
+
             await this.Clients.All.SendAsync("NewMessage", new Message
             {
-                User = this.Context.User.Identity.Name,
+
+                ConnectionId = this.Context.ConnectionId,
+                FromUserName = this.Context.User.Identity.Name,
                 Text = message,
             });
         }
 
-        public async Task SendPrivateMessage(string message, string connId)
+        public async Task SendPrivateMessage(string message, string reciverId)
         {
             var senderId = this.dbContext.Users.FirstOrDefault(x => x.UserName == this.Context.User.Identity.Name).Id;
-            await this.Clients.Users(connId, senderId).SendAsync("NewMessage", new Message
+            await this.Clients.Users(reciverId, senderId).SendAsync("NewMessage", new Message
             {
-                User = this.Context.User.Identity.Name,
+                ConnectionId = this.Context.ConnectionId,
+                FromUserName = this.Context.User.Identity.Name,
+                ToUserName = this.dbContext.Users.FirstOrDefault(x=>x.Id== reciverId).UserName,
+                FromUserID = senderId,
+                ToUserID = reciverId,
                 Text = message,
             });
 
