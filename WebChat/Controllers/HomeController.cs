@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebChat.Data;
 using WebChat.Models;
+using WebChat.ViewModel;
 
 namespace WebChat.Controllers
 {
@@ -32,13 +33,17 @@ namespace WebChat.Controllers
         [Authorize]
         public IActionResult PrivateChat()
         {
-            return View(dbContext.Users.ToList());
+          return View(dbContext.Users.ToList());
         }
 
         [Authorize]
         public IActionResult Chat()
         {
-            return View(dbContext.Users.ToList());
+            var chatViewModel = new ChatViewModel();
+            chatViewModel.Users = this.dbContext.Users.ToList();
+            chatViewModel.Messages= this.dbContext.Messages.Where(x => x.IsPrivate == false).ToList();
+            return View(chatViewModel);
+          
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

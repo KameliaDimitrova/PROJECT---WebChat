@@ -52,18 +52,19 @@ namespace WebChat.Hubs
             }
         }
 
-
-
         public async Task Send(string message)
         {
-
-            await this.Clients.All.SendAsync("NewMessage", new Message
+            var sendMessage = new Message
             {
-
                 ConnectionId = this.Context.ConnectionId,
                 FromUserName = this.Context.User.Identity.Name,
+                IsPrivate = false,
                 Text = message,
-            });
+                FromUserID = this.dbContext.Users.FirstOrDefault(x=>x.UserName== this.Context.User.Identity.Name).Id
+            };
+            this.dbContext.Messages.Add(sendMessage);
+            this.dbContext.SaveChanges();
+            await this.Clients.All.SendAsync("NewMessage", sendMessage);
         }
 
         public async Task SendPrivateMessage(string message, string reciverId)

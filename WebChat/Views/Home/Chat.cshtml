@@ -1,4 +1,4 @@
-﻿@model System.Collections.Generic.List<Microsoft.AspNetCore.Identity.IdentityUser>
+﻿
 @{
     ViewBag.Title = "Chat With All Users";
 }
@@ -12,7 +12,7 @@
 
             <div>
 
-                @foreach (var user in Model)
+                @foreach (var user in Model.Users)
                 {
                     <div class="pt-2 text-center">
                         <h5>@user.UserName</h5>
@@ -28,7 +28,11 @@
                     <button id="sendButton" class="ml-4 btn btn-dark"><h5>Send</h5></button>
                 </div>
                 <hr style="height: 2px;" class="bg-dark" />
-                <div id="messagesList" style="font-size: 32px;">
+                @foreach (var message in Model.Messages)
+                {
+                    <div>@message.FromUserName @message.Text</div>
+                }
+                <div id="messagesList">
                 </div>
             </div>
         </div>
