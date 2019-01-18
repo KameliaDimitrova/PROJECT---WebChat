@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,8 +41,10 @@ namespace WebChat.Controllers
         public IActionResult Chat()
         {
             var chatViewModel = new ChatViewModel();
-            chatViewModel.Users = this.dbContext.Users.ToList();
+            chatViewModel.Users = this.dbContext.Users.Where(x=>x.UserName!=this.User.Identity.Name).ToList();
             chatViewModel.Messages= this.dbContext.Messages.Where(x => x.IsPrivate == false).ToList();
+            chatViewModel.SenderUsername = this.dbContext.Users
+                .FirstOrDefault(x => x.UserName == User.FindFirst(ClaimTypes.Name).Value).UserName;
             return View(chatViewModel);
           
         }

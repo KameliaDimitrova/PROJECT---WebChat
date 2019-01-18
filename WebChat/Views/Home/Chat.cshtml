@@ -11,7 +11,7 @@
             <h4 class="text-center pb-4 pt-4">All Users</h4>
 
             <div>
-
+                <div style="visibility: hidden" id="senderName" value="@Model.SenderUsername">@Model.SenderUsername</div>
                 @foreach (var user in Model.Users)
                 {
                     <div class="pt-2 text-center">
@@ -22,18 +22,29 @@
         </div>
         <div class="col-md-9 input-holder">
             <div class="input-holder">
-                <h4 class="text-left pb-4 pt-4">Message</h4>
+                <h4 class="text-center pt-4">Messages</h4>
+                <hr style="height: 2px;" class="bg-dark" />
+                <div id="messageBody" style=" width:100%; height:400px; overflow-y:auto;">
+                @foreach (var message in Model.Messages)
+                {
+                    if (this.Context.User.Identity.Name == message.FromUserName)
+                    {
+                        <div class="text-right">@message.Text</div>
+                    }
+                    else
+                    {
+                        <div style="color: red;">[@message.FromUserName]: @message.Text</div>
+                    }
+                }
+
+                <div id="messagesList" > </div>
+                </div>
+                <hr style="height: 2px;" class="bg-dark" />
                 <div id="message-holder" class="d-flex justify-content-start">
                     <input class="w-100 pl-3" type="text" id="messageInput" placeholder="Message..." />
                     <button id="sendButton" class="ml-4 btn btn-dark"><h5>Send</h5></button>
                 </div>
-                <hr style="height: 2px;" class="bg-dark" />
-                @foreach (var message in Model.Messages)
-                {
-                    <div>@message.FromUserName @message.Text</div>
-                }
-                <div id="messagesList">
-                </div>
+                
             </div>
         </div>
 
@@ -48,8 +59,15 @@
                 .build();
         connection.on("NewMessage",
             function (message) {
-                var chatInfo = `<div>[${message.fromUserName}] ${message.text}</div>`;
-                $("#messagesList").append(chatInfo);
+                var senderName = $("#senderName").text();
+                if (message.fromUserName == senderName) {
+
+                    var chatInfo = `<div class="text-right">${message.text}</div>`;
+                    $("#messagesList").append(chatInfo);
+                } else {
+                    var chatInfo = `<div  style="color: red">[${message.fromUserName}] ${message.text}</div>`;
+                    $("#messagesList").append(chatInfo);
+                }
             });
         $("#sendButton").click(function () {
             var message = $("#messageInput").val();
@@ -58,5 +76,8 @@
         connection.start().catch(function (err) {
             return console.error(err.toString());
         });
+
+        var messageBody = document.querySelector('#messageBody');
+        messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
     </script>
 }

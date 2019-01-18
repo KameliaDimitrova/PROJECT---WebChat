@@ -12,5 +12,6 @@ namespace WebChat.ViewModel
     {
         public IList<IdentityUser> Users { get; set; }
         public IList<Message> Messages { get; set; }
+        public string SenderUsername { get; set; }
     }
 }
