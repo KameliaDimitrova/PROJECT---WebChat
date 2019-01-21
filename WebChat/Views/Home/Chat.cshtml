@@ -31,7 +31,7 @@
                     {
                         if (this.Context.User.Identity.Name == message.FromUserName)
                         {
-                            <div class="text-right">@message.Text</div>
+                            <div class="text-right pr-4">@message.Text</div>
                         }
                         else
                         {
@@ -64,16 +64,19 @@
                 var senderName = $("#senderName").text();
                 if (message.fromUserName == senderName) {
 
-                    var chatInfo = `<div class="text-right">${message.text}</div>`;
+                    var chatInfo = `<div class="text-right pr-4">${message.text}</div>`;
                     $("#messagesList").append(chatInfo);
                 } else {
                     var chatInfo = `<div  style="color: red">[${message.fromUserName}] ${message.text}</div>`;
                     $("#messagesList").append(chatInfo);
                 }
+                var messageBody = document.querySelector('#messageBody');
+                messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
             });
         $("#sendButton").click(function () {
             var message = $("#messageInput").val();
             connection.invoke("Send", message);
+
         });
         connection.start().catch(function (err) {
             return console.error(err.toString());

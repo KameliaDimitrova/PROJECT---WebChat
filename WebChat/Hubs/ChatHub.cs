@@ -39,17 +39,15 @@ namespace WebChat.Hubs
         }
 
 
-        static List<User> SignalRUsers = new List<User>();
-
-        public void Connect(string userId)
+        public async  Task Connect(string userId)
         {
-            var userName = this.dbContext.Users.FirstOrDefault(x => x.Id == userId).UserName;
-            var id = Context.ConnectionId;
+            var senderId = this.dbContext.Users.FirstOrDefault(x => x.UserName == this.Context.User.Identity.Name).Id;
 
-            if (SignalRUsers.Count(x => x.ConnectionId == id) == 0)
-            {
-                SignalRUsers.Add(new User { ConnectionId = id, UserName = userName });
-            }
+            var chatHistory = this.dbContext.Messages.Where(x => x.FromUserID == senderId && x.ToUserID == userId||
+            x.ToUserID==senderId&&x.FromUserID==userId)
+                .ToList();
+
+          await Clients.Users(senderId).SendAsync("GetHistory", chatHistory);
         }
 
         public async Task Send(string message)
