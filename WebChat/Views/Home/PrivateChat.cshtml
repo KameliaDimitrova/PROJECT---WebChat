@@ -22,16 +22,21 @@
                 }
             </div>
         </div>
-        <div class="col-md-9 input-holder">
-            <div class="input-holder">
-                <h4 class="text-center pt-4">Messages</h4>
+        <div class="col-md-9 ">
+            <div>
+                <div class="row justify-content-around">
+                    <h4 class="text-center col-md-6 mt-4">Messages</h4>
+                    <input id="searcher" class="col-md-3 mt-4" type="text" name="searcher" />
+                    <button id="searchButton" class="ml-2 btn btn-dark col-md-2 mr-2 mt-4" ><h5>Search</h5></button>
+                </div>
+
                 <hr style="height: 2px;" class="bg-dark" />
                 <div id="messageBody" style=" width:100%; height:400px; overflow-y:auto;">
                                       <div id="messagesList"> </div>
                 </div>
                 <hr style="height: 2px;" class="bg-dark" />
                 <div id="message-holder" class="d-flex justify-content-start">
-                    <input class="w-100 pl-3" type="text" id="messageInput" placeholder="Message..." />
+                    <input class="w-75 pl-3" type="text" id="messageInput" placeholder="Message..." />
                     <button id="sendButton" class="ml-4 btn btn-dark"><h5>Send</h5></button>
                 </div>
 
@@ -88,7 +93,7 @@
         });
 
 
-        $('button').not('#sendButton').click(function () {
+        $('button').not('#sendButton').not('#searchButton').click(function () {
             $(this).toggleClass('active');
             $('button').not(this).removeClass('active');
             var userId = $(this).val();
@@ -96,6 +101,13 @@
                 connection.invoke("Connect", userId);               
             }
         });
+
+
+        $("#searchButton").click(function () {
+            let findString = $("#searcher").val();
+            return ("String \x22" + findString + "\x22 found? " + window.find(findString));
+        });
+
 
         connection.start().catch(function (err) {
             return console.error(err.toString());

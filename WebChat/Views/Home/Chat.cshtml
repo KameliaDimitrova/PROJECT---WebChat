@@ -7,7 +7,7 @@
 <hr style="height: 3px;" class="bg-dark" />
 
 
-<div class="container-fluid">
+<div class="container-fluid ">
     <div class="row justify-content-around">
         <div class="col-md-3 ">
             <h4 class="text-center pb-4 pt-4">All Users</h4>
@@ -22,11 +22,16 @@
                 }
             </div>
         </div>
-        <div class="col-md-9 input-holder">
-            <div class="input-holder">
-                <h4 class="text-center pt-4">Messages</h4>
+        <div class="col-md-9">
+            <div>
+                <div class="row justify-content-around">
+                    <h4 class="text-center pt-4 col-md-6">Messages</h4>
+                    <input id="searcher" class="w-75 pl-3 col-md-3 mt-4" type="text" name="searcher" />
+                    <button id="searchButton" class="ml-2 btn btn-dark col-md-2 mt-4 mr-2"><h5>Search</h5></button>
+                </div>
+               
                 <hr style="height: 2px;" class="bg-dark" />
-                <div id="messageBody" style=" width:100%; height:400px; overflow-y:auto;">
+                <div id="messageBody" style="width: 100%; height: 400px; overflow-y: auto;">
                     @foreach (var message in Model.Messages)
                     {
                         if (this.Context.User.Identity.Name == message.FromUserName)
@@ -64,24 +69,32 @@
                 var senderName = $("#senderName").text();
                 if (message.fromUserName == senderName) {
 
-                    var chatInfo = `<div class="text-right pr-4">${message.text}</div>`;
+                    let chatInfo = `<div class="text-right pr-4">${message.text}</div>`;
                     $("#messagesList").append(chatInfo);
                 } else {
-                    var chatInfo = `<div  style="color: red">[${message.fromUserName}] ${message.text}</div>`;
+                    let chatInfo = `<div  style="color: red">[${message.fromUserName}] ${message.text}</div>`;
                     $("#messagesList").append(chatInfo);
                 }
                 var messageBody = document.querySelector('#messageBody');
                 messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
             });
+
         $("#sendButton").click(function () {
             var message = $("#messageInput").val();
             connection.invoke("Send", message);
 
         });
+
+        $("#searchButton").click(function () {
+            let findString = $("#searcher").val();
+            return ("String \x22" + findString + "\x22 found? " + window.find(findString));
+        });
+
+
+
         connection.start().catch(function (err) {
             return console.error(err.toString());
         });
-
         var messageBody = document.querySelector('#messageBody');
         messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
     </script>
